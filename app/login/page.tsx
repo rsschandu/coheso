@@ -1,82 +1,109 @@
 "use client";
-import React from "react";
 
-import {
-	IconBrandGithub,
-	IconBrandGoogle,
-	IconBrandOnlyfans,
-} from "@tabler/icons-react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+// import { getSession, login } from "@/lib/auth";
+import Image from "next/image";
 
-export default function SignupFormDemo() {
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		console.log("Form submitted");
-	};
+const FormSchema = z.object({
+	username: z.string({
+		required_error: "Please enter a username.",
+	}),
+	password: z.string({
+		required_error: "Please enter a password.",
+	}),
+});
+
+export default function LoginPage() {
+	const router = useRouter();
+	const form = useForm<z.infer<typeof FormSchema>>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			username: "",
+			password: "",
+		},
+	});
+
+	async function onSubmit(values: z.infer<typeof FormSchema>) {
+		try {
+			// router.push(await login(values));
+		} catch (error: any) {
+			toast({
+				title:
+					error?.response?.data?.message || "There was an error logging in",
+			});
+		}
+	}
+
 	return (
-		<div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-			<h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-				Welcome to Coheso.ai
-			</h2>
-			<form className="my-8" onSubmit={handleSubmit}>
-				<div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-					<LabelInputContainer>
-						<Label htmlFor="firstname">First name</Label>
-						<Input id="firstname" placeholder="Tyler" type="text" />
-					</LabelInputContainer>
-					<LabelInputContainer>
-						<Label htmlFor="lastname">Last name</Label>
-						<Input id="lastname" placeholder="Durden" type="text" />
-					</LabelInputContainer>
+		<div className="flex min-h-[100dvh] items-center justify-around bg-gray-100 px-4 dark:bg-gray-950">
+			<div className="relative justify-center w-[46%] h-[350px] bg-secondary">
+				<Image alt="logo" src="/logo.png" fill />
+			</div>
+			<div className="w-[50%] max-w-md space-y-4 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
+				{/* Add the logo here and center it */}
+				<div>
+					<div className="space-y-2 text-center">
+						<h1 className="text-2xl font-bold tracking-tight">Sign in</h1>
+						<p className="text-gray-500 dark:text-gray-400">
+							Enter your credentials to access your account.
+						</p>
+					</div>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+							<FormField
+								control={form.control}
+								name="username"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Username</FormLabel>
+										<FormControl>
+											<Input placeholder="username" {...field} />
+										</FormControl>
+										<FormDescription>This is your username.</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Password</FormLabel>
+										<FormControl>
+											<Input
+												type="password"
+												placeholder="password"
+												{...field}
+											/>
+										</FormControl>
+										<FormDescription>
+											Please enter your password.
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Button type="submit">Submit</Button>
+						</form>
+					</Form>
 				</div>
-				<LabelInputContainer className="mb-4">
-					<Label htmlFor="email">Email Address</Label>
-					<Input id="email" placeholder="projectmayhem@fc.com" type="email" />
-				</LabelInputContainer>
-				<LabelInputContainer className="mb-4">
-					<Label htmlFor="password">Password</Label>
-					<Input id="password" placeholder="••••••••" type="password" />
-				</LabelInputContainer>
-				<LabelInputContainer className="mb-8">
-					<Label htmlFor="twitterpassword">Your password</Label>
-					<Input id="twitterpassword" placeholder="••••••••" type="text" />
-				</LabelInputContainer>
-
-				<button
-					className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-					type="submit"
-				>
-					Sign up &rarr;
-					<BottomGradient />
-				</button>
-
-				<div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-			</form>
+			</div>
 		</div>
 	);
 }
-
-const BottomGradient = () => {
-	return (
-		<>
-			<span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-			<span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-		</>
-	);
-};
-
-const LabelInputContainer = ({
-	children,
-	className,
-}: {
-	children: React.ReactNode;
-	className?: string;
-}) => {
-	return (
-		<div className={cn("flex flex-col space-y-2 w-full", className)}>
-			{children}
-		</div>
-	);
-};
