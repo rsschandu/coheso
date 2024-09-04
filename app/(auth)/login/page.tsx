@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-// import { getSession, login } from "@/lib/auth";
 import Image from "next/image";
+import { login } from "@/lib/auth";
 
 const FormSchema = z.object({
 	username: z.string({
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
 	async function onSubmit(values: z.infer<typeof FormSchema>) {
 		try {
-			// router.push(await login(values));
+			router.push(await login(values));
 		} catch (error: any) {
 			toast({
 				title:
@@ -52,7 +52,7 @@ export default function LoginPage() {
 	return (
 		<div className="flex min-h-[100dvh] items-center justify-around bg-gray-100 px-4 dark:bg-gray-950">
 			<div className="relative justify-center w-[46%] h-[350px] bg-secondary">
-				<Image alt="logo" src="/logo.png" fill />
+				<Image alt="logo" src="/coheso-logo.webp" fill />
 			</div>
 			<div className="w-[50%] max-w-md space-y-4 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
 				{/* Add the logo here and center it */}
